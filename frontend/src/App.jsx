@@ -1,10 +1,12 @@
 import { useState } from "react";
 
 
+
 function App() {
 
   const [file,setFile] = useState(null);
   const [data,setData] = useState(null);
+  const [jobDesc, setJobDesc] = useState("");
 
  const uploadResume = async () => {
 
@@ -30,6 +32,7 @@ function App() {
 
   const formData = new FormData();
   formData.append("resume",file);
+  formData.append("job_desc", jobDesc);
 
   const res = await fetch("http://127.0.0.1:5000/upload",{
     method:"POST",
@@ -37,6 +40,7 @@ function App() {
   });
 
   const result = await res.json();
+  console.log("API Response:", result);
   setData(result);
 }
 
@@ -60,6 +64,11 @@ function App() {
         
           <p>Supported formats: PDF, DOCX | Max Size: 2MB</p>
         <br/>
+
+        <textarea
+        placeholder="Enter Job Description"
+        onChange={(e)=>setJobDesc(e.target.value)}
+        ></textarea>
         
 
         <button onClick={uploadResume} className="textcolor">
@@ -104,6 +113,33 @@ function App() {
 
           <h3>Education</h3>
           <p>{data.education}</p>
+
+          <h3>Match Score</h3>
+          <p>{data.match_score}%</p>
+
+          <h3>Job Required Skills</h3>
+
+          <ul>
+            {data.job_skills && data.job_skills.length > 0 ? (
+            data.job_skills.map((skill, i) => (
+            <li key={i}>{skill}</li>
+            ))
+            ) : (
+            <p>No job skills found</p>
+            )}
+        </ul>
+
+          <h3>Skill Gap</h3>
+
+          <ul>
+            {data.skill_gap && data.skill_gap.length > 0 ? (
+             data.skill_gap.map((skill, i) => (
+             <li key={i}>{skill}</li>
+            ))
+           ) : (
+           <p>No skill gap 🎉</p>
+              )}
+          </ul>
 
         </div>
 
